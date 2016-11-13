@@ -1,4 +1,5 @@
 import System.IO
+import System.Exit
 import System.Random
 
 -- TODO: end of lineの処理
@@ -64,9 +65,10 @@ isMatch masked@(x:xs) answer@(y:ys) = (x == '*' || x == y) && isMatch xs ys
 {-| 単語の長さに応じてマスクする文字の個数を返す -}
 maskCount :: String -> Int
 maskCount word
-    | length word <= 5  = 1
-    | length word <= 8  = 2
-    | otherwise         = 3
+    | len <= 5  = 1
+    | len <= 8  = 2
+    | otherwise = 3
+    where len = length word
 
 {-| 与えられた単語をランダムにマスクする -}
 maskWordRandomly :: String -> IO String
@@ -101,17 +103,22 @@ problemLoop words = do
 {-| ユーザー入力を待って正解するまで繰り返す-}
 acceptAnswerLoop problem words = do
     putStr "> " >> hFlush stdout
-    answer <- getLine
-    if answer == "正解は？"
+    done <- isEOF
+    if done
         then do
-            nyankoSays "しょうがにゃいニャ～"
-            nyankoSays $ show $ filter (\x -> isMatch problem x) words
-    else if isMatch problem answer && answer `elem` words
-            then do
-                nyankoSays "正解だニャ"
-            else do
-                nyankoSays "不正解だニャ"
-                acceptAnswerLoop problem words
+            exitSuccess
+        else do
+            answer <- getLine
+            if answer == "正解は？" || answer == "?"
+                then do
+                    nyankoSays "しょうがにゃいニャ～"
+                    nyankoSays $ show $ filter (\x -> isMatch problem x) words
+            else if isMatch problem answer && answer `elem` words
+                    then do
+                        nyankoSays "正解だニャ"
+                    else do
+                        nyankoSays "不正解だニャ"
+                        acceptAnswerLoop problem words
 
 main :: IO ()
 main = do
