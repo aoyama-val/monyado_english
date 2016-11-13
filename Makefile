@@ -12,4 +12,4 @@ doc:
 	haddock -h nyanko.hs -o ./doc
 
 test:
-	doctest nyanko.hs
+	doctest .
