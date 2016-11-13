@@ -2,7 +2,6 @@ import System.IO
 import System.Exit
 import System.Random
 
--- TODO: end of lineの処理
 
 {-| リストの中からランダムに要素を選んで返す -}
 sample :: [a] -> IO a
@@ -112,7 +111,7 @@ acceptAnswerLoop problem words = do
             if answer == "正解は？" || answer == "?"
                 then do
                     nyankoSays "しょうがにゃいニャ～"
-                    nyankoSays $ show $ filter (\x -> isMatch problem x) words
+                    nyankoSays $ show $ filter (isMatch problem) words
             else if isMatch problem answer && answer `elem` words
                     then do
                         nyankoSays "正解だニャ"
